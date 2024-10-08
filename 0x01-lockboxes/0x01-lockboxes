@@ -1,32 +1,32 @@
 #!/usr/bin/python3
 '''LockBoxes Challenge'''
 
-
 def canUnlockAll(boxes):
-    '''determines if all the boxes can be opened or not
+    '''Determines if all the boxes can be opened or not.
+    Args:
+        boxes (list of lists): A list where each index represents a box,
+                               and the value at each index is a list of keys.
     Returns:
-        True: all boxes can be opened
-        False: not all boxes can be opened
+        True if all boxes can be opened, else False.
     '''
-    length = len(boxes)
-    keys = set()
-    opened_boxes = []
-    i = 0
+    # Track the number of boxes and the visited status
+    n = len(boxes)
+    visited = [False] * n  # Initially no box is opened except for box 0
+    visited[0] = True  # Box 0 is always open
 
-    while i < length:
-        oldi = i
-        opened_boxes.append(i)
-        keys.update(boxes[i])
-        for key in keys:
-            if key != 0 and key < length and key not in opened_boxes:
-                i = key
-                break
-        if oldi != i:
-            continue
-        else:
-            break
+    # Use a stack to simulate DFS (Depth-First Search)
+    stack = [0]  # Start with the first box (index 0)
 
-    for i in range(length):
-        if i not in opened_boxes and i != 0:
-            return False
-    return True
+    # Traverse all accessible boxes
+    while stack:
+        current_box = stack.pop()
+
+        # Get keys from the current box and explore boxes with those keys
+        for key in boxes[current_box]:
+            # Check if the key is valid and opens a box that has not been visited yet
+            if key < n and not visited[key]:
+                visited[key] = True  # Mark this box as visited
+                stack.append(key)  # Add the newly unlocked box to the stack
+
+    # Check if all boxes were visited
+    return all(visited)
